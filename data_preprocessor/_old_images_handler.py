@@ -1,4 +1,5 @@
 from ._old_image_reader import ImageReader
+
 from torchvision import transforms
 import torch
 
@@ -6,7 +7,7 @@ import torch
 # I DON'T USE THIS CLASS ANYMORE (torchvision already has ImageFolder for my purposes)
 # Also it's unfinished :)
 
-class ImagesHandler:
+class DataHandler:
     def __init__(self, size: tuple[int] = (64, 64)):
         self.__image_reader = ImageReader()
         self.__images = self.__image_reader.read_images()
