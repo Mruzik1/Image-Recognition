@@ -20,12 +20,13 @@ class MainModel:
         self.__optimizer = torch.optim.SGD(self.__model.parameters(), lr=learning_rate)
         self.__loss_fn = nn.CrossEntropyLoss()
 
-        self.__train_history = []                                               # a list of loss values (appends with every new epoch)
+        self.__train_history = []                                               # lists of loss values (appends with every new epoch)
+        self.__test_history = []                                                #
 
-    # getting training history
+    # getting training and testing histories respectively
     @property
-    def history(self) -> list[Tensor]:
-        return self.__train_history
+    def history(self) -> tuple[list[Tensor]]:
+        return self.__train_history, self.__test_history
     
     # print training process
     def __print_process(self, loss: Tensor, batch: int, epoch: int, epochs_total: int):
@@ -34,19 +35,24 @@ class MainModel:
         print(f'Epoch: [{epoch+1}/{epochs_total}] | Batch: {batch} | Batch Loss: [{loss:.4f}]', end='\r') 
 
     # testing loop
-    def test_loop(self, dataset: DataLoader) -> tuple[Tensor]:
+    def test_loop(self, dataset: DataLoader) -> tuple[list, float]:
         with torch.inference_mode():
             self.__model.eval()
-            features, labels = next(iter(dataset))
+            total_loss = 0
+            predictions = []
 
-            features.to(self.__device)
-            labels.to(self.__device)
+            for features, labels in dataset:
+                features.to(self.__device)
+                labels.to(self.__device)
 
-            pred = self.__model(features)
-            loss = self.__loss_fn(pred, labels)
+                pred = self.__model(features)
+                loss = self.__loss_fn(pred, labels)
 
-        self.__model.train()
-        return pred.detach(), loss.detach()
+                predictions.append(pred.detach())
+                total_loss += loss.detach()
+
+        print(f'Total Testing Loss: [{total_loss/len(dataset):.4f}]')
+        return predictions, total_loss/len(dataset)
 
     # training step (one epoch)
     def __train_step(self, epoch: int, epochs: int, dataset: DataLoader, total_loss: int) -> Tensor:
@@ -66,12 +72,14 @@ class MainModel:
         return total_loss/len(dataset)
     
     # training loop
-    def train_loop(self, epochs: int, dataset: DataLoader):
-        self.__model.train()
+    def train_loop(self, epochs: int, dataset: DataLoader, test_dataset: DataLoader):
         print('Started Training...')
 
         for epoch in range(epochs):
+            self.__model.train()
             total_loss = self.__train_step(epoch, epochs, dataset, 0)
             
-            print(f'\nTotal Epoch Loss: {total_loss:.4f}')
+            
+            print(f'\nTotal Epoch Loss: [{total_loss:.4f}]')
+            self.__test_history.append(self.test_loop(test_dataset)[1])
             self.__train_history.append(total_loss)
