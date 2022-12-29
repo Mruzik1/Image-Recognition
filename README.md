@@ -2,7 +2,6 @@
 
 
 ## Project Structure
-<br />
 
 ### Main Script:
 - *main.py*
@@ -39,7 +38,6 @@
 
 
 ## Tests
-<br />
 
 ### Tests were performed including following parameters:
 - `learning_rate` *= 0.05*,
@@ -49,5 +47,8 @@
 - `testing_dataset_size` *= 8%*
 - `training_dataset_size` *= 92%*
 
-## Results
+### Additional info
+The CNN was learning to recognize weather by different photos. There were 6 weather classes: *dew, glaze, hail, rain, sandstorm, snow*. You can check them all in the "./data" folder.
+
+### Results
 <img src="./report/cnn_2.png" width='1300px'/>
