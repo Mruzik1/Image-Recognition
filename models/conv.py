@@ -1,6 +1,8 @@
-from torch import nn
+from torch import nn, Tensor
 
 
+# typical convolution+pooling part of a CNN consisting of 3 blocks:
+# "convolutional layer -> relu activation -> (max)pooling"
 class ConvolutionalLayers(nn.Module):
     def __init__(self, hidden_units: int):
         super().__init__()
@@ -12,7 +14,7 @@ class ConvolutionalLayers(nn.Module):
         self.pool = nn.MaxPool2d(kernel_size=2)
         self.relu = nn.ReLU()
 
-    def forward(self, X):
+    def forward(self, X: Tensor) -> Tensor:
         X = self.relu(self.conv1(X))
         X = self.pool(X)
         X = self.relu(self.conv2(X))
