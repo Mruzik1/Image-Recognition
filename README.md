@@ -48,7 +48,7 @@
 - `training_dataset_size` *= 92%*
 
 ### Additional info
-The CNN was learning to recognize weather by different photos. There were 6 weather classes: *dew, glaze, hail, rain, sandstorm, snow*. You can check them all in the "./data" folder.
+The CNN was learning to recognize weather from different photos. There were 6 weather classes: *dew, glaze, hail, rain, sandstorm, snow*. You can check them all out in the "./data" folder.
 
 ### Results
 <img src="./report/cnn_2.png" width='1300px'/>
