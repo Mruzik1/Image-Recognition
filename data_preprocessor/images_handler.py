@@ -28,8 +28,8 @@ class DataHandler:
         return random_split(self.__img_folder, (train_n, test_n))
 
     # returns training and testing data loaders respectively
-    def get_data(self, batch_size: int = 1, train_size: float = 0.2) -> tuple[DataLoader]:
-        train, test = self.__split_data(train_size)
+    def get_data(self, batch_size: int = 1, test_size: float = 0.2) -> tuple[DataLoader]:
+        train, test = self.__split_data(test_size)
 
         train_dataloader = DataLoader(dataset=train, batch_size=batch_size,
                                       shuffle=True, num_workers=1)

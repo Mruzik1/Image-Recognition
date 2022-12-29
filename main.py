@@ -15,14 +15,14 @@ if __name__ == '__main__':
     # taking some data
     img_handler = DataHandler('./data')
     class_names = img_handler.class_names
-    train_data, test_data = img_handler.get_data(batch_size=20, train_size=0.1)
+    train_data, test_data = img_handler.get_data(batch_size=20, test_size=0.15)
 
     # creating/loading a model
     model_path = './model_data/cnn_model.pth'
     model = MainModel(len(class_names), learning_rate=0.05)
 
     # training a model
-    model.train_loop(2, train_data, test_data, save_path=model_path)
+    model.train_loop(100, train_data, test_data, save_path=model_path)
 
     print(f'Training Time: {time.time() - INIT_TIME}')
 
@@ -30,6 +30,7 @@ if __name__ == '__main__':
     # visualize
     train_history, test_history, accuracy = model.history
     fig, axs = plt.subplots(2)
+    fig.set_size_inches(12, 9.5)
 
     axs[0].set_title('Total Loss')
     axs[0].plot(train_history, label='training loss')
