@@ -27,12 +27,13 @@ class MainModel:
         self.__loss_fn = nn.CrossEntropyLoss()
 
         self.__train_history = []                                               # lists of loss values (appends with every new epoch)
-        self.__test_history = []                                                # ^
+        self.__test_history = []                                                #
+        self.__accuracy_history = []                                            # 
 
-    # getting training and testing histories respectively
+    # getting training, testing, and accuracy histories respectively
     @property
     def history(self) -> tuple[list[Tensor]]:
-        return self.__train_history, self.__test_history
+        return self.__train_history, self.__test_history, self.__accuracy_history
     
     # testing loop
     def test_loop(self, dataset: DataLoader) -> tuple[Tensor, Tensor]:
@@ -83,6 +84,7 @@ class MainModel:
 
             print(f'Total Testing Loss: [{self.__test_history[-1]:.4f}] | Testing Accuracy: [{accuracy*100:.2f}%]\n')
             self.__train_history.append(total_loss)
+            self.__accuracy_history.append(accuracy)
         
         if save_path != None:
             torch.save(obj=self.__model.state_dict(), f=save_path)
