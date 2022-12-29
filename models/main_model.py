@@ -8,14 +8,19 @@ from .conv import ConvolutionalLayers
 
 class MainModel:
     def __init__(self, classes_count: int, learning_rate: float = 0.1, img_size: tuple[int] = (64, 64)):
+        hidden_units = 32
+        classifier_input = hidden_units*img_size[0]//4*img_size[1]//4           # classifier input size
+
+        self.__device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.__model = nn.Sequential(
-            Classifier(classes_count),
-            ConvolutionalLayers(img_size[0]*img_size[1])
-        )
-        self.__optimizer = torch.optim.SGD(self.__model.parameters(), learning_rate)
+            ConvolutionalLayers(hidden_units),
+            Classifier(classifier_input, classes_count)
+        ).to(self.__device)
+
+        self.__optimizer = torch.optim.SGD(self.__model.parameters(), lr=learning_rate)
         self.__loss_fn = nn.CrossEntropyLoss()
 
-        self.__train_history = []       # a list of loss values from every evaluation
+        self.__train_history = []                                               # a list of loss values from every evaluation
 
     # getting training history
     @property
@@ -24,36 +29,44 @@ class MainModel:
     
     # print training process
     def __print_process(self, loss: float, batch: int, epoch: int, epochs_total: int):
-        print(f'Epoch: [{epoch}/{epochs_total}] | Batch: {batch} | Total Loss: [{loss:.4f}]', end='\r')
-
-        if (batch % (epochs_total // 5) == 0):
-            print('', end='\n'*3 if epoch == epochs_total-1 else '\n')
+        if (batch == 0):
+            print('')
+        print(f'Epoch: [{epoch+1}/{epochs_total}] | Batch: {batch} | Total Loss: [{loss:.4f}]', end='\r') 
 
     # testing loop
-    def test_loop(self, dataset: DataLoader) -> tuple[torch.Tensor, torch.Tensor]:
+    def test_loop(self, dataset: DataLoader) -> tuple[torch.Tensor]:
         with torch.inference_mode():
             self.__model.eval()
             features, labels = next(iter(dataset))
+            features.to(self.__device)
+            labels.to(self.__device)
 
             pred = self.__model(features)
             loss = self.__loss_fn(pred, labels)
 
-            self.__model.train()
+        self.__model.train()
         return pred.detach(), loss.detach()
     
     # training loop
     def train_loop(self, epochs: int, dataset: DataLoader):
         self.__model.train()
+        print('Started training...')
 
         for epoch in range(epochs):
+            total_loss = 0
             for batch, (features, labels) in enumerate(dataset):
+                features.to(self.__device)
+                labels.to(self.__device)
+                
                 pred = self.__model(features)
                 loss = self.__loss_fn(pred, labels)
-                self.__train_history.append(loss.detach())
-
-                loss.backward()
+                with torch.no_grad():
+                    total_loss += loss.detach()
+                
                 self.__optimizer.zero_grad()
+                loss.backward()
                 self.__optimizer.step()
 
-                self.__print_process(loss.detach(), batch, epoch, epochs)
-                self.__train_history.append(loss.detach())
+                self.__print_process(total_loss/len(dataset), batch, epoch, epochs)
+            self.__train_history.append(total_loss/len(dataset))
+            
