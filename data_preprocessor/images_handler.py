@@ -3,9 +3,9 @@ from torch.utils.data import DataLoader, Subset, random_split
 
 
 class DataHandler:
-    def __init__(self,  root: str):
+    def __init__(self, root: str, size: tuple[int] = (64, 64)):
         transform_fn = transforms.Compose([
-            transforms.Resize(size=(64, 64)),
+            transforms.Resize(size=size),
             transforms.ToTensor()
         ])
         self.__img_folder = datasets.ImageFolder(root=root, transform=transform_fn)
