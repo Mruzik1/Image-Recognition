@@ -1,7 +1,7 @@
 from torch import nn, Tensor
 
 
-# simple classifier with only 2 layers: flatten and linear (fully connected layers)
+# fully-connected neural network 
 # it's enough for my CNN
 class Classifier(nn.Module):
     def __init__(self, input_size: int, classes_count: int):
@@ -9,7 +9,8 @@ class Classifier(nn.Module):
 
         self.__model = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(input_size, classes_count)
+            nn.Linear(input_size, classes_count),
+            nn.Softmax(dim=1)
         )
 
     def forward(self, X: Tensor) -> Tensor:

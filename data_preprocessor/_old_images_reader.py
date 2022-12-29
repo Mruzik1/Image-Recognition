@@ -5,7 +5,7 @@ from PIL import Image
 
 # I DON'T USE THIS CLASS ANYMORE (torchvision already has ImageFolder for my purposes)
 
-class ImageReader:
+class ImagesReader:
     def __init__(self, root: str ='./data'):
         self.__root_path = root
         self.__inner_dirs = next(os.walk(root))[1]

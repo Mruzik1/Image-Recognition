@@ -11,7 +11,7 @@ class MainModel:
                  size: tuple[int] = (64, 64), load_path: str = None):
 
         hidden_units = 16                                                      # conv layers' hidden units
-        classifier_input = hidden_units*size[0]//4*size[1]//4                  # classifier input size (depends on the convolution+pooling parameters)
+        classifier_input = hidden_units*size[0]//8*size[1]//8                  # classifier input size (depends on the convolution+pooling parameters)
 
         self.__device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 

@@ -1,4 +1,4 @@
-from ._old_image_reader import ImageReader
+from ._old_images_reader import ImagesReader
 
 from torchvision import transforms
 import torch
@@ -9,7 +9,7 @@ import torch
 
 class DataHandler:
     def __init__(self, size: tuple[int] = (64, 64)):
-        self.__image_reader = ImageReader()
+        self.__image_reader = ImagesReader()
         self.__images = self.__image_reader.read_images()
         self.__transform_fn = transforms.Compose([              # a function for transforming images
             transforms.Resize(size=size),
