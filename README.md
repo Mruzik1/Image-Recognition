@@ -34,7 +34,6 @@
 - `Classifier` - classification layer in the CNN with following layers (fully-connected):
     - `Flatten()`
     - `Linear(input_size, classes_count)` - *input_size* can be calculated by analyzing the convolutional part of the network
-    - `Softmax()`
 
 
 ## Tests
